@@ -6,6 +6,7 @@
 import numpy as np
 import os 
 from PIL import Image
+from skimage.util import random_noise
 
 LIST_EXTENSIONS=['png', 'jpg', 'jpeg']
 
@@ -77,3 +78,15 @@ def normalize_image(image:np.ndarray) -> np.ndarray:
 
     return np.clip(image/255, 0, 1)
 
+def add_noise(image, prop:float = 1):
+    """
+    Add noise (pepper and salt) on given image with some proportion
+
+    Input: 
+        image: np.ndarray object with (height, width, channels)
+        prop: float proportion of salt and pepper 
+    
+    Return:
+        np.ndarray object with the same shape but with pepper and salte noise
+    """
+    return random_noise(image, mode='s&p', amount=prop)*image
