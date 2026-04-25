@@ -1,3 +1,8 @@
+##============================================
+## Author : MEKA Moïse Christian Junior
+## Email : moise.meka@students.unibe.ch
+##============================================
+
 import numpy as np 
 from scipy.ndimage import convolve, gaussian_filter
 from skimage.feature import canny
