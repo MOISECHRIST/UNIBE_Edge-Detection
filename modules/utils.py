@@ -3,6 +3,13 @@
 ## Email : moise.meka@students.unibe.ch
 ##============================================
 
+"""
+Utility functions for image loading, processing, and manipulation.
+
+This module provides common utilities such as reading images, checking file extensions,
+converting RGB to grayscale, normalizing pixel values, and adding noise.
+"""
+
 import numpy as np
 import os 
 from PIL import Image
@@ -12,81 +19,104 @@ LIST_EXTENSIONS=['png', 'jpg', 'jpeg']
 
 def read_image(filepath:str) -> np.ndarray:
     """
-    Read an image from a file path and return a numpy array 
+    Read an image from a file path and return it as a numpy array.
 
-    Input:
-        filepath : Path to image as str
-    
-    Return:
-        Numpy array with shape (height, width, channels) for RGB images or (height, width) for gray scale images
+    Parameters
+    ----------
+    filepath : str | Image Object
+        Path to the image file.
+
+    Returns
+    -------
+    np.ndarray or None
+        Numpy array with shape (H, W, C) for RGB or (H, W) for grayscale.
+        Returns None if the path is invalid or the file cannot be opened.
     """
 
-    if not isinstance(filepath, str):
-        return None
-
     try:
-        image = Image.open(filepath)
-    except:
+        # The 'with' statement ensures the file is automatically closed
+        with Image.open(filepath) as image:
+            return np.array(image)
+    except (FileNotFoundError, IOError, ValueError) as e:
         return None
-    
-    return np.array(image)
 
 def check_extension(filepath:str, extension:str|list) -> bool:
     """
-    Check if the file given as input has the expected extension
+    Check if the file has one of the expected extensions.
 
-    Input:
-        filepath: Path to a file as str
-        extension: One or a list of expected extensions as str or list (eg: '.jpg', ['.png','.jpeg'])
-    
-    Return:
-        Boolean value: True if the file has the expected extension
-                       False otherwise 
+    Parameters
+    ----------
+    filepath : str
+        Path to a file.
+    extension : str or list of str
+        The expected extension(s) (e.g., '.jpg' or ['.png', '.jpeg']).
+
+    Returns
+    -------
+    bool
+        True if the file extension matches, False otherwise.
     """
 
-    file_ext = os.path.splitext(filepath)
+    file_ext = os.path.splitext(filepath)[1]
 
-    if file_ext in extension:
-        return True
-    else:
-        return False
+    if isinstance(extension, list):
+        return file_ext in extension
+    return file_ext == extension
+
 
 def rgb2grayscale(image:np.ndarray) -> np.ndarray:
     """
-    Convert a RGB image into a gray scale 
+    Convert an RGB image to grayscale.
 
-    Input:
-        image: np.ndarray object with shape (height, width, channels)
-    
-    Return:
-        np.ndarray object with shape (height, width)
+    Parameters
+    ----------
+    image : np.ndarray
+        RGB image array with shape (H, W, 3).
+
+    Returns
+    -------
+    np.ndarray
+        Grayscale image array with shape (H, W).
     """
-
-    R, G, B = image[:,:,0], image[:,:,1], image[:,:,2]
-    return 0.2989 * R + 0.5870 * G + 0.1140 * B
+    if image.ndim==3:
+        grayscale = np.dot(image[...,:3], [0.299, 0.587, 0.114])
+        grayscale = grayscale.astype(image.dtype)
+        return grayscale
+    return image
 
 def normalize_image(image:np.ndarray) -> np.ndarray:
     """
-    Normalize pixel values between 0 and 1
+    Normalize image pixel values to the range [0, 1].
 
-    Input:
-        image: np.ndarray object with shape (height, width, channels)
-    
-    Return:
-        np.ndarray object with the same shape but pixels between 0 and 1
+    Parameters
+    ----------
+    image : np.ndarray
+        Input image array.
+
+    Returns
+    -------
+    np.ndarray
+        Normalized image array with values between 0 and 1.
     """
 
     return np.clip(image/255, 0, 1)
 
-def add_noise(image, prop:float = 1):
+def add_noise(image: np.ndarray, prop: float = 1) -> np.ndarray:
     """
-    Add noise (pepper and salt) on given image with some proportion
+    Add salt and pepper noise to an image.
 
-    Input: 
-        image: np.ndarray object with (height, width, channels)
-        prop: float proportion of salt and pepper 
-    
-    Return:
-        np.ndarray object with the same shape but with pepper and salte noise
+    Parameters
+    ----------
+    image : np.ndarray
+        Input image array.
+    prop : float, optional
+        Proportion of pixels to replace with noise (default is 1.0).
+
+    Returns
+    -------
+    np.ndarray
+        Image array with added salt and pepper noise.
     """
     return random_noise(image, mode='s&p', amount=prop)*image
+
+

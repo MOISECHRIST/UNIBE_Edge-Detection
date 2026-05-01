@@ -3,6 +3,16 @@
 ## Email : moise.meka@students.unibe.ch
 ##============================================
 
+"""
+Core image processing functions for edge detection and filtering.
+
+This module implements various edge detection algorithms and filters including:
+- Gradient computation (Sobel, Prewitt, Roberts)
+- Difference of Gaussians (DoG)
+- Laplacian of Gaussian (LoG)
+- Canny edge detection steps (NMS, Hysteresis thresholding)
+"""
+
 import numpy as np 
 from scipy.ndimage import convolve, gaussian_filter
 from skimage.feature import canny
@@ -35,6 +45,23 @@ LAPLACIAN_FILTER = np.array([
 ])
 
 def compute_gradient(image:np.ndarray, on:Literal['X', 'Y'] = 'X', filtername:Literal['sobel', 'prewitt', 'robert'] = 'sobel')-> np.ndarray:
+    """
+    Compute the image gradient along a specified axis using a chosen filter.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Input grayscale image.
+    on : {'X', 'Y'}, optional
+        The axis along which to compute the gradient (default is 'X').
+    filtername : {'sobel', 'prewitt', 'robert'}, optional
+        The type of filter to use for gradient computation (default is 'sobel').
+
+    Returns
+    -------
+    np.ndarray or None
+        The computed gradient image, or None if parameters are invalid.
+    """
     
     if filtername in ['sobel', 'prewitt']:
         if on == 'X':
@@ -49,6 +76,25 @@ def compute_gradient(image:np.ndarray, on:Literal['X', 'Y'] = 'X', filtername:Li
         return None
 
 def magnitude_direction(Gradient_x: np.ndarray, Gradient_y: np.ndarray, out: Literal['both', 'magnitude', 'orientation']='both') -> tuple|np.ndarray:
+    """
+    Calculate the magnitude and/or orientation of the image gradient.
+
+    Parameters
+    ----------
+    Gradient_x : np.ndarray
+        Gradient of the image along the X-axis.
+    Gradient_y : np.ndarray
+        Gradient of the image along the Y-axis.
+    out : {'both', 'magnitude', 'orientation'}, optional
+        Specifies which values to return (default is 'both').
+
+    Returns
+    -------
+    tuple or np.ndarray
+        - If 'both': (magnitude, orientation)
+        - If 'magnitude': magnitude array
+        - If 'orientation': orientation (angle) array in radians.
+    """
     
     if out == 'both':
         return np.sqrt(Gradient_x**2 + Gradient_y**2) , np.arctan2(Gradient_y, Gradient_x)
@@ -58,6 +104,23 @@ def magnitude_direction(Gradient_x: np.ndarray, Gradient_y: np.ndarray, out: Lit
         return np.arctan2(Gradient_y, Gradient_x)
 
 def dog_kernel(sigma:float, half=None, on:Literal['X','Y']='X')->np.ndarray:
+    """
+    Generate a Difference of Gaussians (DoG) kernel (derivative of Gaussian).
+
+    Parameters
+    ----------
+    sigma : float
+        Standard deviation of the Gaussian distribution.
+    half : int, optional
+        Half-width of the kernel. If None, it is calculated as 3*sigma.
+    on : {'X', 'Y'}, optional
+        The axis along which to compute the derivative (default is 'X').
+
+    Returns
+    -------
+    np.ndarray
+        The generated DoG kernel.
+    """
     
     if half == None:
         half = int(3*sigma)
@@ -75,6 +138,23 @@ def dog_kernel(sigma:float, half=None, on:Literal['X','Y']='X')->np.ndarray:
         return dgdy - dgdy.mean()
 
 def gradient_of_gaussian(image:np.ndarray, sigma:float, **kwarg) -> tuple:
+    """
+    Compute the gradient of an image after applying Gaussian smoothing.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Input grayscale image.
+    sigma : float
+        Standard deviation for the Gaussian filter.
+    **kwarg : dict
+        Additional arguments passed to `compute_gradient`.
+
+    Returns
+    -------
+    tuple
+        (magnitude, orientation) of the gradient.
+    """
     
     blured_image = gaussian_filter(image, sigma=sigma)
 
@@ -83,6 +163,21 @@ def gradient_of_gaussian(image:np.ndarray, sigma:float, **kwarg) -> tuple:
     return magnitude_direction(Gx, Gy)
 
 def non_maximum_suppression(magnitude:np.ndarray, angle:np.ndarray):
+    """
+    Perform Non-Maximum Suppression (NMS) to thin edges.
+
+    Parameters
+    ----------
+    magnitude : np.ndarray
+        Gradient magnitude of the image.
+    angle : np.ndarray
+        Gradient orientation in radians.
+
+    Returns
+    -------
+    np.ndarray
+        Image with thinned edges.
+    """
     height, width = magnitude.shape
     result = np.zeros_like(magnitude)
     angle_deg = np.rad2deg(angle) % 180
@@ -100,6 +195,24 @@ def non_maximum_suppression(magnitude:np.ndarray, angle:np.ndarray):
     return result
 
 def show_hyteresis_thresholding(image:np.ndarray, high_threshold:float):
+    """
+    Visualize strong and weak edges based on hysteresis thresholding.
+
+    Strong edges are pixels above the high threshold.
+    Weak edges are pixels between low (high/2) and high thresholds.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Input thinned edge image (from NMS).
+    high_threshold : float
+        The high threshold for hysteresis.
+
+    Returns
+    -------
+    np.ndarray
+        An RGB image visualizing strong edges (green) and weak edges (red).
+    """
     low_thresgold = high_threshold/2
 
     strong = image >= high_threshold
@@ -112,13 +225,60 @@ def show_hyteresis_thresholding(image:np.ndarray, high_threshold:float):
     return result
 
 def apply_canny(image:np.ndarray, sigma: float, high_threshold:float) -> np.ndarray:
+    """
+    Apply Canny edge detection using the scikit-image implementation.
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Input grayscale image.
+    sigma : float
+        Standard deviation of the Gaussian filter.
+    high_threshold : float
+        The high threshold for hysteresis.
+
+    Returns
+    -------
+    np.ndarray
+        Boolean array where True indicates an edge.
+    """
     low_thresgold = high_threshold/2
     return canny(image, sigma, low_thresgold, high_threshold)
 
-def apply_laplacian(image):
+def apply_laplacian(image: np.ndarray) -> np.ndarray:
+    """
+    Apply a Laplacian filter for edge detection (second-order derivative).
+
+    Parameters
+    ----------
+    image : np.ndarray
+        Input grayscale image.
+
+    Returns
+    -------
+    np.ndarray
+        The filtered image showing second-order derivatives.
+    """
     return convolve(image, LAPLACIAN_FILTER)
 
 def log_kernel(sigma:float, half=None, on:Literal['X','Y']='X')->np.ndarray:
+    """
+    Generate a Laplacian of Gaussian (LoG) kernel.
+
+    Parameters
+    ----------
+    sigma : float
+        Standard deviation of the Gaussian distribution.
+    half : int, optional
+        Half-width of the kernel. If None, it is calculated as 4*sigma.
+    on : {'X', 'Y'}, optional
+        Unused parameter kept for consistency with DoG signature.
+
+    Returns
+    -------
+    np.ndarray
+        The generated LoG kernel.
+    """
     
     if half == None:
         half = int(4*sigma)
