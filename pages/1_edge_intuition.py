@@ -66,7 +66,7 @@ if raw_image is not None:
             if len(st.session_state.clicked_points) > 2:
                 st.session_state.clicked_points = [point]
 
-        st.write(f"Points selected: {len(st.session_state.clicked_points)}/2")
+            st.write(f"Points selected: {len(st.session_state.clicked_points)}/2")
 
         if len(st.session_state.clicked_points) == 2:
             p1 = st.session_state.clicked_points[0]
@@ -98,6 +98,7 @@ if raw_image is not None:
 
             if st.button("Clear Points"):
                 st.session_state.clicked_points = []
+                value = None
                 st.rerun()
 else:
     st.info("Please select a sample image or upload your own to begin.")
@@ -109,4 +110,4 @@ with col1:
     st.page_link("app.py", label="**Quick Introduction**")
 
 with col2:
-    st.page_link("app.py", label="**Edge detection using dradient**")
+    st.page_link("app.py", label="**Edge detection using gradient**")
