@@ -41,7 +41,8 @@ streamlit run app.py
 ```
 
 ## Online version
-https://homework-2-moisechrist.streamlit.app/
+- streamlit community : https://homework-2-moisechrist.streamlit.app/
+- hoggingface : https://huggingface.co/spaces/MOISECHRIST/homework_2_MOISECHRIST
 
 ## Project Structure
 
