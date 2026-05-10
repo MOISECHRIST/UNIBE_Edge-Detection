@@ -40,6 +40,9 @@ To launch the interactive application:
 streamlit run app.py
 ```
 
+## Online version
+https://homework-2-moisechrist.streamlit.app/
+
 ## Project Structure
 
 - `app.py`: Main entry point and navigation setup.
