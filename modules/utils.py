@@ -14,8 +14,24 @@ import numpy as np
 import os 
 from PIL import Image
 from skimage.util import random_noise
+import streamlit as st
 
 LIST_EXTENSIONS=['png', 'jpg', 'jpeg']
+
+sample_images = {
+    "lenna":"sample_data/Lenna.png",
+    "cameraman": "sample_data/cameraman.png",
+    "cat1": "sample_data/cat3.png",
+    "checkerboard" : "sample_data/checkerboard.png",
+    "circles": "sample_data/circles.jpg",
+    "cat2": "sample_data/hugo.jpg",
+    "owl": "sample_data/owl.jpg",
+    "shapes" : "sample_data/shapes.jpg",
+    "Upload your image": None
+}
+
+def wipe_everything():
+    st.session_state.clear()
 
 def read_image(filepath:str) -> np.ndarray:
     """

@@ -160,7 +160,8 @@ def gradient_of_gaussian(image:np.ndarray, sigma:float, **kwarg) -> tuple:
 
     Gx = compute_gradient(blured_image, on='X', **kwarg)
     Gy = compute_gradient(blured_image, on='Y', **kwarg)
-    return magnitude_direction(Gx, Gy)
+    mag, direct =  magnitude_direction(Gx, Gy)
+    return Gx, Gy, mag, direct
 
 def non_maximum_suppression(magnitude:np.ndarray, angle:np.ndarray):
     """

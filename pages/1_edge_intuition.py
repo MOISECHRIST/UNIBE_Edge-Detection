@@ -15,20 +15,13 @@ st.set_page_config(
     page_title="Edge-Detection"
 )
 
-st.sidebar.header("First Intuition")
+st.write("## Edge Intuition")
 
-sample_images = {
-    "cameraman": "sample_data/cameraman.png",
-    "cat1": "sample_data/cat3.png",
-    "checkerboard" : "sample_data/checkerboard.png",
-    "circles": "sample_data/circles.jpg",
-    "cat2": "sample_data/hugo.jpg",
-    "owl": "sample_data/owl.jpg",
-    "shapes" : "sample_data/shapes.jpg",
-    "Upload your image": None
-}
+st.divider()
 
-image_name = st.sidebar.selectbox(label="Choose your sample image", options=sample_images.keys())
+image_name = st.sidebar.selectbox(label="Choose your sample image", 
+                                  options=utils.sample_images.keys(),
+                                  on_change=utils.wipe_everything)
 
 raw_image = None
 if image_name == "Upload your image":
@@ -36,8 +29,8 @@ if image_name == "Upload your image":
                                              accept_multiple_files=False)
     if uploaded_file:
         raw_image = utils.read_image(uploaded_file)
-elif sample_images[image_name]:
-    raw_image = utils.read_image(sample_images[image_name])
+elif utils.sample_images[image_name]:
+    raw_image = utils.read_image(utils.sample_images[image_name])
 
 
 if raw_image is not None:
@@ -54,7 +47,7 @@ if raw_image is not None:
     
     with col1:
         st.write("Click two points on the image to draw a profile line.")
-        value = streamlit_image_coordinates(pil_image, key="img_coords", height =400, width=400)
+        value = streamlit_image_coordinates(pil_image, key="img_coords", height =350, width=300)
 
     with col2:
         if value is not None:
@@ -100,6 +93,14 @@ if raw_image is not None:
                 st.session_state.clicked_points = []
                 value = None
                 st.rerun()
+    if len(st.session_state.clicked_points) == 2:
+        st.markdown("""
+                    **Note :** As you can see in the graph above, when the segment between the 
+                    two points crosses an edge, variations are observed in the graphs.
+
+                    Here, we used the derivative of a line to identify potential edges.
+                    The question is how to apply this same principle to images, since these are 2D representations…
+                    """)
 else:
     st.info("Please select a sample image or upload your own to begin.")
 
@@ -107,7 +108,7 @@ st.divider()
 
 col1, col2 = st.columns([3, 2])
 with col1:
-    st.page_link("app.py", label="**Quick Introduction**")
+    st.page_link("pages/0_intro_edge.py", label="**Quick Introduction**")
 
 with col2:
-    st.page_link("app.py", label="**Edge detection using gradient**")
+    st.page_link("pages/2_apply_gradient.py", label="**Edge detection using gradient**")
