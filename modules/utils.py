@@ -31,6 +31,9 @@ sample_images = {
 }
 
 def wipe_everything():
+    """
+    Clear the Streamlit session state.
+    """
     st.session_state.clear()
 
 def read_image(filepath:str) -> np.ndarray:

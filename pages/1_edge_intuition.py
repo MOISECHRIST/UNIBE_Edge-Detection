@@ -3,6 +3,14 @@
 ## Email : moise.meka@students.unibe.ch
 ##============================================
 
+"""
+Interactive exploration of edge intuition using intensity profiles.
+
+This page allows users to select two points on an image and visualize the 
+pixel intensity profile and its derivative along the line segment between them.
+It demonstrates the mathematical concept of an edge as a sharp change in intensity.
+"""
+
 from modules import utils
 import streamlit as st
 from streamlit_image_coordinates import streamlit_image_coordinates

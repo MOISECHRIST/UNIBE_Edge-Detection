@@ -105,7 +105,7 @@ def magnitude_direction(Gradient_x: np.ndarray, Gradient_y: np.ndarray, out: Lit
 
 def dog_kernel(sigma:float, half=None, on:Literal['X','Y']='X')->np.ndarray:
     """
-    Generate a Difference of Gaussians (DoG) kernel (derivative of Gaussian).
+    Generate a Derivative of Gaussians (DoG) kernel (derivative of Gaussian).
 
     Parameters
     ----------
@@ -218,7 +218,6 @@ def show_hyteresis_thresholding(image:np.ndarray, high_threshold:float):
 
     strong = image >= high_threshold
     weak   = (image >= low_thresgold) & (image < high_threshold)
-    suppressed = image < low_thresgold
 
     result = np.zeros((*image.shape, 3))
     result[strong] = [0, 0.9, 0]       
