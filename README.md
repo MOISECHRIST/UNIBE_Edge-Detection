@@ -43,6 +43,9 @@ streamlit run app.py
 ## Online version
 - streamlit community : https://homework-2-moisechrist.streamlit.app/
 - hoggingface : https://huggingface.co/spaces/MOISECHRIST/homework_2_MOISECHRIST
+- scan QR code :
+
+![https://lnk.ua/KagU3mpyp](images/KagU3mpyp.svg)
 
 ## Project Structure
 
