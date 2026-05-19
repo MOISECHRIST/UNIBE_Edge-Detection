@@ -80,7 +80,7 @@ if raw_image is not None:
     - Large $\sigma$ (e.g., 2.0+): Removes significant noise and detects only "strong," large-scale boundaries 
     (like the outline of a head vs. the individual strands of hair).
         """)
-            sigma = st.sidebar.select_slider(label="The value of sigma ($\sigma$)", options=np.arange(0.01,5.01,0.01))
+            sigma = st.sidebar.select_slider(label="The value of sigma ($\sigma$)", options=np.arange(0.01,5.01,0.01), value=0.5)
         else:
             st.warning("As you can see, this method is very sensitive to noise.")
         processed_image = utils.add_noise(image=processed_image, prop=prop_noise)

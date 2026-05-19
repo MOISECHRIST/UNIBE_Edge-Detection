@@ -98,6 +98,7 @@ if raw_image is not None:
             st.pyplot(fig=fig)
 
             if st.button("Clear Points"):
+                utils.wipe_everything()
                 st.session_state.clicked_points = []
                 value = None
                 st.rerun()

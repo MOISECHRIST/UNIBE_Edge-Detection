@@ -26,12 +26,12 @@ image_name = st.sidebar.selectbox(label="Choose your sample image",
                                   options=utils.sample_images.keys(),
                                   on_change=utils.wipe_everything)
 prop_noise = st.sidebar.select_slider(label="Add noises on image", options=np.arange(0, 1.01, 0.01))
-sigma = st.sidebar.select_slider(label="The value of sigma ($\sigma$)", options=np.arange(0.01,5.01,0.01))
+sigma = st.sidebar.select_slider(label="The value of sigma ($\sigma$)", options=np.arange(0.01,5.01,0.01), value=0.5)
 filter_name = st.sidebar.selectbox(
         label="Choose your filter", 
         options=["Sobel", "Prewitt", "Robert"]
     )
-high_thresold = st.sidebar.select_slider(label="Define the thresold", options=np.arange(0.01,5.01,0.01))
+high_thresold = st.sidebar.select_slider(label="Define the thresold", options=np.arange(0.01,5.01,0.01), value=0.5)
 
 st.markdown("## Canny Edge Detector")
 
@@ -59,14 +59,27 @@ if raw_image is not None:
     if prop_noise>0:
         processed_image = utils.add_noise(image=processed_image, prop=prop_noise)
 
-    with st.expander("1- Apply Gaussian smoothing :"):
-        
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["1- Gaussian smoothing", "2- Gradient (magnitude and angle)", 
+                                      "3- Non-Maximum Suppression", "4- Hysteresis Thresholding", "Canny final result"])
+
+    with tab1:
+        with st.expander("Recall on Gaussian smoothing"):
+            st.markdown("""
+                **Gaussian smoothing** (often called Gaussian blur) is a mathematical technique used to reduce noise and soften details in an image.\
+                        
+                The Gaussian smoothing filter uses a 2D Gaussian distribution function to calculate pixel weights in a neighborhood:
+            """)
+            c1, c2 = st.columns(2)
+            with c1:
+                st.image("images/gaussian_kernel.png", width=300)
+            with c2:
+                st.pyplot(img_viz.plot_gaussian_distributions(), width=350)
         blured_image = gaussian_filter(processed_image, sigma=sigma)
         st.pyplot(img_viz.plot_step_img_process(processed_image, blured_image,
                                     titles=["Original Image", "Blured Image"],
                                     cmaps=["grey","grey"]))
 
-    with st.expander("2- Apply Gradient (magnitude and direction) :"):
+    with tab2:
         _, _,magnitude, direction = processing.gradient_of_gaussian(processed_image, 
                                                                     sigma=sigma, 
                                                                     filtername=filter_name.lower())
@@ -75,7 +88,7 @@ if raw_image is not None:
                                             titles=["Original Image", 'Gradient magnitude |∇I|', 'Direction $\Theta$'],
                                             cmaps=["grey", "hot", "hsv"], figsize=(25,20)))
 
-    with st.expander("3- Apply Non-Maximum Suppression"):
+    with tab3:
         st.markdown("""
         - **Problem:** the gradient magnitude map has thick ridges around edges. We want edges that are exactly one pixel wide.
     - **Idea:** at each pixel, look at the two neighbours along the gradient direction. If this pixel is not
@@ -87,7 +100,7 @@ if raw_image is not None:
                                     titles=["Original Image", "Non-Maximum Suppression"],
                                     cmaps=["grey","hot"]))
 
-    with st.expander("4- Apply Hysteresis Thresholding"):
+    with tab4:
         st.markdown("""
     After NMS we still have many pixels. A single threshold would either miss weak edges or keep
     too much noise.
@@ -102,7 +115,7 @@ if raw_image is not None:
         st.pyplot(img_viz.plot_step_img_process(processed_image, thresgolding_result,
                                     titles=["Original Image", f"Hysteresis Thresholding (ht={high_thresold:.3f})"],
                                     cmaps=["grey",None]))
-    with st.expander("Canny final result"):
+    with tab5:
         canny_result = processing.apply_canny(processed_image, sigma=sigma, high_threshold=high_thresold)
         st.pyplot(img_viz.plot_step_img_process(processed_image, canny_result,
                                     titles=["Original Image", f"Canny (ht={high_thresold:.3f} $\sigma$={sigma:.3f})"],

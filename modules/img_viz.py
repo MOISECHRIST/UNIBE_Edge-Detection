@@ -5,7 +5,7 @@
 
 import numpy as np
 from matplotlib import pyplot as plt
-
+import seaborn as sns
 
 def plot_gradients_img(image:np.ndarray, gradient1_img:np.ndarray, gradient2_img:np.ndarray, 
                        titles = ["Original Image", "Gx (horizontal)", "Gy (vertical)"],
@@ -79,3 +79,16 @@ def plot_step_img_process(image:np.ndarray, result_img_processing:np.ndarray,
         ax.axis('off')
     
     return fig
+
+def plot_gaussian_distributions(sigmas:list=[1.0, 2.0]):
+    n = 100
+    mu = 0
+    distribs = {key: np.random.normal(loc=mu, size=n, scale=key) for key in sigmas}
+    fig = plt.figure()
+    for key in distribs.keys():
+        sns.kdeplot(distribs[key], label=key)
+    
+    plt.legend()
+    return fig
+    
+    
