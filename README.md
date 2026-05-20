@@ -16,6 +16,8 @@ An interactive, educational application designed to explore the mathematical and
 
 ## Installation
 
+### Using GitHub and pip 
+
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/MOISECHRIST/UNIBE_Edge-Detection.git 
@@ -32,6 +34,15 @@ An interactive, educational application designed to explore the mathematical and
    ```bash
    pip install -r requirements.txt
    ```
+
+### Using huggingface and docker
+
+If not available, install docker using the [link](https://docs.docker.com/engine/install/)
+
+```bash
+docker run -it --rm -p 7860:7860 --platform=linux/amd64 \
+	registry.hf.space/moisechrist-homework-2-moisechrist:latest 
+```
 
 ## Usage
 
