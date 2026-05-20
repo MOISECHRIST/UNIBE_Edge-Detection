@@ -65,7 +65,7 @@ if raw_image is not None:
             st.info("Applied alone it is very noisy, so we combine it with Gaussian smoothing. That is the goal of Laplacian of Gaussian")
         st.pyplot(img_viz.plot_step_img_process(processed_image, laplacian_output,
                                     titles=["Original Image", "Laplacian"],
-                                    cmaps=["grey","hsv"]))
+                                    cmaps=["grey","hsv"]), width="content")
         
 
     with tab2:
@@ -82,7 +82,7 @@ if raw_image is not None:
         LoG_output = convolve(processed_image, LoG_kernel)
         st.pyplot(img_viz.plot_step_img_process(processed_image, LoG_output,
                                     titles=["Original Image", f"LoG $\sigma$={sigma:.3f}"],
-                                    cmaps=["grey","hsv"]))
+                                    cmaps=["grey","hsv"]), width="content")
 
     with tab3:
         canny_result = processing.apply_canny(processed_image, sigma=sigma, high_threshold=high_thresold)
@@ -90,7 +90,7 @@ if raw_image is not None:
         st.pyplot(img_viz.plot_gradients_img(canny_result, laplacian_output, LoG_output,
                                              titles=[f"Canny (ht={high_thresold:.3f} $\sigma$={sigma:.3f})",
                                                      "Laplacian",f"LoG $\sigma$={sigma:.3f}"],
-                                                     cmaps=["grey","hsv","hsv"]))
+                                                     cmaps=["grey","hsv","hsv"]), width="content")
     
 else:
     st.info("Please select a sample image or upload your own to begin.")

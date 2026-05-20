@@ -77,7 +77,7 @@ if raw_image is not None:
         blured_image = gaussian_filter(processed_image, sigma=sigma)
         st.pyplot(img_viz.plot_step_img_process(processed_image, blured_image,
                                     titles=["Original Image", "Blured Image"],
-                                    cmaps=["grey","grey"]))
+                                    cmaps=["grey","grey"]), width="content")
 
     with tab2:
         _, _,magnitude, direction = processing.gradient_of_gaussian(processed_image, 
@@ -86,7 +86,7 @@ if raw_image is not None:
         
         st.pyplot(img_viz.plot_gradients_img(processed_image, magnitude, direction, 
                                             titles=["Original Image", 'Gradient magnitude |∇I|', 'Direction $\Theta$'],
-                                            cmaps=["grey", "hot", "hsv"], figsize=(25,20)))
+                                            cmaps=["grey", "hot", "hsv"], figsize=(25,20)), width="content")
 
     with tab3:
         st.markdown("""
@@ -114,12 +114,12 @@ if raw_image is not None:
         thresgolding_result = processing.show_hyteresis_thresholding(NMS_result, high_threshold=high_thresold)
         st.pyplot(img_viz.plot_step_img_process(processed_image, thresgolding_result,
                                     titles=["Original Image", f"Hysteresis Thresholding (ht={high_thresold:.3f})"],
-                                    cmaps=["grey",None]))
+                                    cmaps=["grey",None]), width="content")
     with tab5:
         canny_result = processing.apply_canny(processed_image, sigma=sigma, high_threshold=high_thresold)
         st.pyplot(img_viz.plot_step_img_process(processed_image, canny_result,
                                     titles=["Original Image", f"Canny (ht={high_thresold:.3f} $\sigma$={sigma:.3f})"],
-                                    cmaps=["grey",'grey']))
+                                    cmaps=["grey",'grey']), width="content")
 else:
     st.info("Please select a sample image or upload your own to begin.")
     
